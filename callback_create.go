@@ -175,6 +175,11 @@ func createCallback(scope *Scope) {
 
 // forceReloadAfterCreateCallback will reload columns that having default value, and set it back to current object
 func forceReloadAfterCreateCallback(scope *Scope) {
+	primaryField := scope.PrimaryField()
+	if primaryField == nil || primaryField.IsBlank {
+		return
+	}
+
 	if blankColumnsWithDefaultValue, ok := scope.InstanceGet("gorm:blank_columns_with_default_value"); ok {
 		db := scope.DB().New().Table(scope.TableName()).Select(blankColumnsWithDefaultValue.([]string))
 		for _, field := range scope.Fields() {
